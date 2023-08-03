@@ -58,6 +58,21 @@ def parse_short_declaration(input_string):
         initial_value = tokens[3]
     return ("short", variable_name, initial_value)
 
+def parse_declaration(tokens):
+    variable_type = tokens[0]
+    variable_name = tokens[1]
+    if tokens[2] == '=':
+        initial_value = parse_expression(tokens[3:]) # Analiza el valor inicial
+        return {'type': 'declaration', 'var_type': variable_type, 'name': variable_name, 'value': initial_value}, 4
+    else:
+        return {'type': 'declaration', 'var_type': variable_type, 'name': variable_name}, 2
+
+def parse_control_structure(tokens):
+    control_type = tokens[0]
+    condition = parse_expression(tokens[1:]) # Analiza la condición
+    body, size = parse_body(tokens[3:]) # Analiza el cuerpo
+    return {'type': control_type, 'condition': condition, 'body': body}, 3 + size
+
 def parse_if_else_statement(input_string):
     tokens = re.findall(r'\w+|\S', input_string)
     if tokens[0] != "if":
@@ -173,30 +188,41 @@ ddef parse_const_declaration(tokens):
 
 def parse_body(tokens):
     index = 0
+    body_nodes = []  # Lista para almacenar los nodos del cuerpo
 
     # Continuamos analizando mientras haya tokens
     while index < len(tokens):
         # Verificamos si estamos en un caso ('case') o en el caso predeterminado ('default')
         if tokens[index] == 'case' or tokens[index] == 'default':
-            index += parse_case_or_default(tokens[index:])
+            node, size = parse_case_or_default(tokens[index:])
+            body_nodes.append(node)
+            index += size
         # Verificamos si estamos en una declaración
         elif is_declaration(tokens[index:]):
-            index += parse_declaration(tokens[index:])
+            node, size = parse_declaration(tokens[index:])
+            body_nodes.append(node)
+            index += size
         # Verificamos si estamos en una estructura de control (como un 'if' o un 'while')
         elif is_control_structure(tokens[index:]):
-            index += parse_control_structure(tokens[index:])
+            node, size = parse_control_structure(tokens[index:])
+            body_nodes.append(node)
+            index += size
         else:
             raise SyntaxError(f"Unexpected tokens in body: '{tokens[index:]}'")
+    
+    # Retornar la lista de nodos que representan el cuerpo de código
+    return body_nodes
 
 def parse_case_or_default(tokens):
     if tokens[0] == 'case':
-        # Analizar un caso individual
-        parse_expression(tokens[1:-1])  # Asume que 'break;' está al final
+        case_expression = parse_expression(tokens[1:]) # Analiza la expresión del caso
+        body, size = parse_body(tokens[3:]) # Analiza el cuerpo del caso
+        return {'type': 'case', 'expression': case_expression, 'body': body}, 3 + size
     elif tokens[0] == 'default':
-        # Analizar el caso predeterminado
-        parse_body(tokens[1:-1])  # Asume que 'break;' está al final
+        body, size = parse_body(tokens[1:]) # Analiza el cuerpo del caso predeterminado
+        return {'type': 'default', 'body': body}, 1 + size
     else:
-        raise SyntaxError(f"Expected 'case' or 'default', got '{tokens[0]}'")
+        raise SyntaxError(f"Expected 'case' or 'default', but found '{tokens[0]}'")
 
 def extract_expression_until_opening_brace(tokens):
     expression_tokens = []

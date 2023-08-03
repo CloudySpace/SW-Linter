@@ -385,4 +385,15 @@ def parse_cout(tokens):
     # Extraemos y analizamos la expresión a imprimir
     expression_tokens = tokens[2:]
     parse_expression(expression_tokens)
+    
+#Función Principal para Analizar return
+ def parse_return_statement(tokens):
+    # Verificamos que el primer token sea 'return'
+    if tokens[0] != 'return':
+        raise SyntaxError(f"Expected 'return', got '{tokens[0]}'")
+
+    # Extraemos y analizamos la expresión a devolver
+    expression_tokens = tokens[1:]
+    parse_expression(expression_tokens)
+   
 

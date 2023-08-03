@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+parsetab.py
+__pycache__/*
+ply/__pycache__/*

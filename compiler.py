@@ -1,15 +1,14 @@
+# INTERPRETE BASICO
+
+# -----------------------------------------------------------------------------
+# UNIVA
+# 02/08/2023
+#
+# Ejemplo interprete sencillo con Python3 utilizando ply
+# -----------------------------------------------------------------------------
 import ply.lex as lex
 import ply.yacc as yacc
 from enum import Enum
-
-# ANALIZADOR LEXICO
-
-# -----------------------------------------------------------------------------
-# Rainman Sián
-# 26-02-2020
-#
-# Ejemplo interprete sencillo con Python utilizando ply en Ubuntu
-# -----------------------------------------------------------------------------
 
 reservadas = {
     'numero' : 'NUMERO',

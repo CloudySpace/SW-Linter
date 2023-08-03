@@ -305,50 +305,6 @@ def extract_condition_until_semicolon(tokens):
         raise SyntaxError(f"Expected ';', got '{tokens[index]}'")
     return condition_tokens
 
-#Función Principal para Analizar FOR
-def parse_for_statement(tokens):
-    # Verificamos la palabra clave 'for'
-    if tokens[0] != 'for':
-        raise SyntaxError(f"Expected 'for', got '{tokens[0]}'")
-
-    # Extraemos y analizamos las partes de la sentencia for
-    initialization_tokens, condition_tokens, update_tokens, index = extract_for_parts(tokens[1:])
-    parse_expression(initialization_tokens)
-    parse_expression(condition_tokens)
-    parse_expression(update_tokens)
-
-    # Extraemos y analizamos el cuerpo del bucle
-    body_tokens = extract_body_until_closing_brace(tokens[index + 1:])
-    parse_body(body_tokens)
-
-#Función Auxiliar para Extraer las Partes de la Sentencia FOR
-def extract_for_parts(tokens):
-    # Verificamos el paréntesis de apertura
-    if tokens[0] != '(':
-        raise SyntaxError(f"Expected '(', got '{tokens[0]}'")
-
-    # Extraemos las partes separadas por punto y coma
-    initialization_tokens, condition_tokens, update_tokens = [], [], []
-    part = initialization_tokens
-    index = 1
-    while tokens[index] != ')':
-        if tokens[index] == ';':
-            if part is initialization_tokens:
-                part = condition_tokens
-            elif part is condition_tokens:
-                part = update_tokens
-        else:
-            part.append(tokens[index])
-        index += 1
-
-    # Verificamos el paréntesis de cierre
-    if tokens[index] != ')':
-        raise SyntaxError(f"Expected ')', got '{tokens[index]}'")
-
-    return initialization_tokens, condition_tokens, update_tokens, index
-
-#Función para Bloques switch-case
-#Función Principal para Analizar switch-case
 def parse_switch_statement(tokens):
     # Verificamos la palabra clave 'switch'
     if tokens[0] != 'switch':

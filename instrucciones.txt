@@ -1,0 +1,853 @@
+Ejemplo Estructura del lenguaje:
+“[
+int opcion;
+	float opcion2 = 0.0;
+	char var = ‘W’;   
+	Const char var  = ‘W’;
+	Const char var = ‘\n’;
+	Long int opcion3;
+	Short int opcion4 = 1;
+
+
+while(i > 3){
+		
+	};
+	if(opcion >=opcion2)
+	;
+	if(opcion >=opcion2)
+	;
+	else
+		Return;
+
+	Int var = sizeof(var/const);
+
+for (i=1;i<=10;++i){
+   if (i==3)
+   continue;
+   if (i==7)
+   break;
+   
+}
+switch(expression)
+{
+   default:
+    //some statements to execute when default;
+    case '0':
+    //some statements to execute when 1
+    break;
+    case '1':
+    //some statements to execute when 5
+    break;
+    
+}
+
+
+
+
+int i;
+do 
+{
+   Cout << i;
+   i++;
+}
+while (i<10);
+
+		
+
+]”
+
+
+
+“[\n
+for (i=1;i<=10;++i){
+   if (i==3)
+   continue;
+   if (i==7)
+   break;
+   printf("%d ",i);
+}
+]“
+
+T:
+Identificadores (Variables y constantes)
+Var, constante
+Palabras reservadas
+sizeof, cout, continue, return, case, break, default,
+Tipos de datos
+int, float, char
+Modificadores de tipos de datos
+long, short, const
+Operadores matemáticos (aritméticos, relacionales y lógicos)
+Asignación
+=
+Relacionales
+<=,>=,<,>,==,!=
+Aritméticos
++,*,/,-++, --,
+Lógicos
+&&, ||
+Sentencias de control (IF, WHILE, DO WHILE, SWITCH, FOR)
+while, if, else,for, do,switch
+
+
+Reglas:
+ 
+Para definir un Int o un const int donde pc es el carácter de punto y coma
+S → int B | const int B
+B → var C | var;
+C → pc;
+
+
+
+
+def S(tokens):
+    if tokens and (tokens[0][0] == 'int' or tokens[0][0] == 'const'):
+        B(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def B(tokens):
+    if tokens and tokens[0][0] == 'var':
+        C(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == ';':
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+
+
+
+
+ 
+
+
+
+
+Para definir un float o un const float
+S → float B | const float B
+B → var C  | var;
+C → igual D;
+D → E.E
+E → num E | λ
+
+def S(tokens):
+    if tokens and (tokens[0][0] == 'float' or tokens[0][0] == 'const'):
+        B(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def B(tokens):
+    if tokens and tokens[0][0] == 'var':
+        C(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == '=':
+        D(tokens[1:])
+    elif tokens and tokens[0][0] == ';':
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+def D(tokens):
+    E(tokens)
+
+def E(tokens):
+    if tokens and tokens[0][0] == 'num':
+        E(tokens[1:])
+    elif tokens and tokens[0][0] == '.':
+        E(tokens[1:])
+    else:
+        pass
+
+
+
+
+
+Para definir un char o un const char, donde wildcard es cualquier carácter
+S → char A | const char A
+A → var B | var;
+B → igual ‘C’ ;
+C → wildcard
+
+
+def S(tokens):
+    if tokens and (tokens[0][0] == 'char' or tokens[0][0] == 'const'):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def A(tokens):
+    if tokens and tokens[0][0] == 'var':
+        B(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def B(tokens):
+    if tokens and tokens[0][0] == '=':
+        C(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == 'wildcard':
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+
+
+
+
+
+
+
+
+Para definir un long, short, const long, const short
+S → long A | short A | const long A | const short A
+A → int B B → var C | var;
+C → igual D;
+D → número D | λ
+
+
+def S(tokens):
+    if tokens and (tokens[0][0] == 'long' or tokens[0][0] == 'short' or tokens[0][0] == 'const'):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def A(tokens):
+    if tokens and tokens[0][0] == 'int':
+        B(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def B(tokens):
+    if tokens and tokens[0][0] == 'var':
+        C(tokens[1:])
+    elif tokens and tokens[0][0] == 'var':
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == '=':
+        D(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+def D(tokens):
+    if tokens and tokens[0][0] == 'número':
+        D(tokens[1:])
+    elif tokens:
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en D')
+
+
+
+Para definir un int con un sizeof o un sizeof solo
+S → int A | sizeof (var);
+A → var B
+B → igual C
+C → sizeof (var); | sizeof
+
+def S(tokens):
+    if tokens and tokens[0][0] == 'int':
+        A(tokens[1:])
+    elif tokens and tokens[0][0] == 'sizeof':
+        if tokens[1][0] == '(' and tokens[3][0] == ')':
+            # Se valida que tenga la forma sizeof (var);
+            pass
+        else:
+            raise SyntaxError('Error sintáctico en S')
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def A(tokens):
+    if tokens and tokens[0][0] == 'var':
+        B(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def B(tokens):
+    if tokens and tokens[0][0] == '=':
+        C(tokens[1:])
+    elif tokens:
+        pass
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == 'sizeof':
+        if tokens[1][0] == '(' and tokens[2][0] == 'var' and tokens[3][0] == ')':
+            # Se valida que tenga la forma sizeof (var);
+            pass
+        elif tokens[1][0] == ';':
+            # Se valida que tenga la forma sizeof;
+            pass
+        else:
+            raise SyntaxError('Error sintáctico en C')
+    else:
+        raise SyntaxError('Error sintáctico en C')
+Para definir un ciclo IF sin else
+S → if ( var A) { C
+A → Opc B (operador de comparación)
+B → int E | char E | floatE | var E
+C → cout <<var;}
+E → λ | && F | || F
+F → var A | var
+ 
+donde los operadores de comparación son solamente estos <=,>=,<,>,==,!=
+
+def S(tokens):
+    if tokens and tokens[0][0] == 'if':
+        if tokens[1][0] == '(':
+            B(tokens[2:])
+        else:
+            raise SyntaxError('Error sintáctico en S')
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def B(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def A(tokens):
+    if tokens and (tokens[0][0] == '<=' or tokens[0][0] == '>=' or tokens[0][0] == '<' or tokens[0][0] == '>' or tokens[0][0] == '==' or tokens[0][0] == '!='):
+        E(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def E(tokens):
+    if not tokens or tokens[0][0] == '&&' or tokens[0][0] == '||':
+        F(tokens[1:])
+    else:
+        pass
+
+def F(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en F')
+
+
+
+def C(tokens):
+    if tokens and tokens[0][0] == '{':
+        if tokens[-1][0] == '}':
+            # Se valida que haya contenido dentro del bloque
+            pass
+        else:
+            raise SyntaxError('Error sintáctico en C')
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+
+
+Para definir un if seguido de un else
+S → if ( var A) { C
+A → Opc B (operador de comparación)
+B → int E | char E | floatE | var E
+C → cout <<var;} G
+E → λ | && F | || F
+F → var A | var
+G → else H {
+H →var C }
+donde los operadores de comparación son solamente estos <=,>=,<,>,==,!=
+
+
+def S(tokens):
+    if tokens and tokens[0][0] == 'if':
+        if tokens[1][0] == '(':
+            B(tokens[2:])
+        else:
+            raise SyntaxError('Error sintáctico en S')
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def B(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def A(tokens):
+    if tokens and (tokens[0][0] == '<=' or tokens[0][0] == '>=' or tokens[0][0] == '<' or tokens[0][0] == '>' or tokens[0][0] == '==' or tokens[0][0] == '!='):
+        E(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+
+def E(tokens):
+    if not tokens or tokens[0][0] == '&&' or tokens[0][0] == '||':
+        F(tokens[1:])
+    else:
+        pass
+
+def F(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        A(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en F')
+
+def C(tokens):
+    if tokens and tokens[0][0] == '{':
+        if tokens[-1][0] == '}':
+            # Se valida que haya contenido dentro del bloque
+            pass
+        else:
+            raise SyntaxError('Error sintáctico en C')
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+def G(tokens):
+    if tokens and tokens[0][0] == 'else':
+        H(tokens[1:])
+    else:
+        raise SyntaxError('Error sintáctico en G')
+
+def H(tokens):
+    if tokens and tokens[0][0] == '{':
+        if tokens[-1][0] == '}':
+            # Se valida que haya contenido dentro del bloque
+            pass
+        else:
+            raise SyntaxError('Error sintáctico en H')
+    else:
+        raise SyntaxError('Error sintáctico en H')
+
+
+
+
+
+Para definir un switch – case 
+S → switch ( var) { C
+C → default : F 
+D → λ | && F | ll F 
+E → var A | var 
+F → exp; br; | exp br G 
+G → case ‘num’: H 
+H → exp; br; } | exp; }
+
+# Implementación del analizador semántico para un switch - case en C++
+
+def S(tokens):
+    if tokens[0] == 'switch' and tokens[1] == '(':
+        tokens.pop(0)  # Consumir 'switch'
+        tokens.pop(0)  # Consumir '('
+
+        # Validar la variable
+        var = E(tokens)
+
+        if tokens[0] == ')' and tokens[1] == '{':
+            tokens.pop(0)  # Consumir ')'
+            tokens.pop(0)  # Consumir '{'
+
+            # Validar los casos
+            C(tokens)
+
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba ')' seguido de '{'")
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'switch' seguido de '('")
+
+def C(tokens):
+    if tokens[0] == 'default' and tokens[1] == ':':
+        tokens.pop(0)  # Consumir 'default'
+        tokens.pop(0)  # Consumir ':'
+
+        # Validar la sentencia F
+        F(tokens)
+
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'default' seguido de ':'")
+
+def D(tokens):
+    if tokens[0] == '&&':
+        tokens.pop(0)  # Consumir '&&'
+
+        # Validar la sentencia F
+        F(tokens)
+
+    elif tokens[0] == 'll':
+        tokens.pop(0)  # Consumir 'll'
+
+        # Validar la sentencia F
+        F(tokens)
+
+    # La producción D también puede ser lambda (vacío)
+    # No se hace nada en este caso
+
+def E(tokens):
+    # Validar la variable
+    if tokens[0].isalpha():
+        return tokens.pop(0)  # Consumir variable
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba una variable")
+
+def F(tokens):
+    # Validar la expresión
+    if tokens[0].isalnum():
+        tokens.pop(0)  # Consumir expresión
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba una expresión")
+
+    if tokens[0] == ';':
+        tokens.pop(0)  # Consumir ';'
+
+        # Validar el 'br'
+        if tokens[0] == 'br':
+            tokens.pop(0)  # Consumir 'br'
+
+            # Validar la sentencia G
+            G(tokens)
+
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba 'br'")
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba ';'")
+
+def G(tokens):
+    if tokens[0] == 'case':
+        tokens.pop(0)  # Consumir 'case'
+
+        if tokens[0].startswith("'") and tokens[0].endswith("'"):
+            tokens.pop(0)  # Consumir 'num'
+
+            if tokens[0] == ':':
+                tokens.pop(0)  # Consumir ':'
+
+                # Validar la sentencia H
+                H(tokens)
+
+            else:
+                raise SyntaxError("Error de sintaxis: Se esperaba ':' después del número")
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba un número entre comillas")
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'case' seguido de un número entre comillas")
+
+def H(tokens):
+    # Validar la expresión
+    if tokens[0].isalnum():
+        tokens.pop(0)  # Consumir expresión
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba una expresión")
+
+    if tokens[0] == ';':
+        tokens.pop(0)  # Consumir ';'
+
+        if tokens[0] == 'br':
+            tokens.pop(0)  # Consumir 'br'
+            if tokens[0] == '}':
+                tokens.pop(0)  # Consumir '}'
+                return
+
+            # Validar la sentencia G
+            G(tokens)
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba 'br'")
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba ';'")
+
+# Llamada inicial al analizador
+def parse(tokens):
+    try:
+        S(tokens)
+        if len(tokens) == 0:
+            print("Análisis sintáctico exitoso.")
+        else:
+            raise SyntaxError("Error de sintaxis: Tokens adicionales al final del código")
+
+    except SyntaxError as e:
+        print("Error de sintaxis:", e)
+
+# Ejemplo de uso:
+codigo = "switch (var) { default: exp; br; case 'num': exp; br; }"
+tokens = codigo.split()
+parse(tokens)
+
+ 
+Para definir un ciclo while
+S → while ( var <= num) { A
+A →  cout <<var; B
+B → var ++; } S
+Donde la única función que realizara es imprimir una variable en pantalla
+
+def S(tokens):
+    if tokens and tokens[0][0] == 'while':
+        if tokens[1][0] == '(':
+            A(tokens[2:])
+        else:
+            raise SyntaxError('Error sintáctico en S')
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def A(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        if tokens[1][0] == '<=' or tokens[1][0] == '>=' or tokens[1][0] == '<' or tokens[1][0] == '>' or tokens[1][0] == '==' or tokens[1][0] == '!=':
+            if tokens[2][0] == 'num':
+                if tokens[3][0] == ')':
+                    if tokens[4][0] == '{':
+                        B(tokens[5:])
+                    else:
+                        raise SyntaxError('Error sintáctico en A')
+                else:
+                    raise SyntaxError('Error sintáctico en A')
+            else:
+                raise SyntaxError('Error sintáctico en A')
+        else:
+            raise SyntaxError('Error sintáctico en A')
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def B(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        if tokens[1][0] == '++':
+            if tokens[2][0] == '}':
+                S(tokens[3:])
+            else:
+                raise SyntaxError('Error sintáctico en B')
+        else:
+            raise SyntaxError('Error sintáctico en B')
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+
+
+
+
+S → do { A
+A →  cout <<var; B
+B → var ++; } C
+C → while ( var > num);
+
+# Implementación del analizador semántico para la producción S → do { A
+def S(tokens):
+    if tokens[0] == 'do' and tokens[1] == '{':
+        tokens.pop(0)  # Consumir 'do'
+        tokens.pop(0)  # Consumir '{'
+
+        # Validar la producción A
+        A(tokens)
+
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'do' seguido de '{'")
+
+# Implementación del analizador semántico para la producción A → cout << var; B
+def A(tokens):
+    if tokens[0] == 'cout' and tokens[1] == '<<':
+        tokens.pop(0)  # Consumir 'cout'
+        tokens.pop(0)  # Consumir '<<'
+
+        # Validar la variable
+        var = E(tokens)
+
+        if tokens[0] == ';' and tokens[1].endswith(';'):
+            tokens.pop(0)  # Consumir ';'
+
+            # Validar la producción B
+            B(tokens)
+
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba ';' seguido de una variable")
+
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'cout' seguido de '<<'")
+
+# Implementación del analizador semántico para la producción B → var++;
+def B(tokens):
+    if tokens[0].isalpha() and tokens[1] == '++' and tokens[2] == ';':
+        tokens.pop(0)  # Consumir variable
+        tokens.pop(0)  # Consumir '++'
+        tokens.pop(0)  # Consumir ';'
+
+        # Validar la producción C
+        C(tokens)
+
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba una variable seguida de '++' y ';'")
+
+# Implementación del analizador semántico para la producción C → while ( var > num);
+def C(tokens):
+    if tokens[0] == 'while' and tokens[1] == '(':
+        tokens.pop(0)  # Consumir 'while'
+        tokens.pop(0)  # Consumir '('
+
+        # Validar la variable
+        E(tokens)
+
+        if tokens[0] == '>' and tokens[1].isdigit() and tokens[2] == ')':
+            tokens.pop(0)  # Consumir '>'
+            tokens.pop(0)  # Consumir número
+            tokens.pop(0)  # Consumir ')'
+
+            if tokens[0] == ';':
+                tokens.pop(0)  # Consumir ';'
+
+                # La validación ha finalizado correctamente.
+                return
+
+            else:
+                raise SyntaxError("Error de sintaxis: Se esperaba ';'")
+
+        else:
+            raise SyntaxError("Error de sintaxis: Se esperaba una expresión lógica válida en el 'while'")
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba 'while' seguido de '('")
+
+# Función para validar la variable
+def E(tokens):
+    if tokens[0].isalpha():
+        return tokens.pop(0)  # Consumir variable
+    else:
+        raise SyntaxError("Error de sintaxis: Se esperaba una variable")
+
+# Llamada inicial al analizador
+def parse(tokens):
+    try:
+        S(tokens)
+        if len(tokens) == 0:
+            print("Análisis sintáctico exitoso.")
+        else:
+            raise SyntaxError("Error de sintaxis: Tokens adicionales al final del código")
+
+    except SyntaxError as e:
+        print("Error de sintaxis:", e)
+
+# Ejemplo de uso:
+codigo = "do { cout << var; var++; } while (var > 5);"
+tokens = codigo.split()
+parse(tokens)
+
+
+
+
+
+Para definir un ciclo For el cual tiene un continue
+S →for ( var = num ; var A;  var ++) { C
+A → opc B
+B → num
+C → if ( var == num) continue; D
+ D → if ( var == num) br; }
+Donde br es el break
+
+
+
+def S(tokens):
+    if tokens and tokens[0][0] == 'for':
+        if tokens[1][0] == '(':
+            if tokens[2][0] == 'var':
+                if tokens[3][0] == '=':
+                    if tokens[4][0] == 'num':
+                        if tokens[5][0] == ';':
+                            A(tokens[6:])
+                        else:
+                            raise SyntaxError('Error sintáctico en S')
+                    else:
+                        raise SyntaxError('Error sintáctico en S')
+                else:
+                    raise SyntaxError('Error sintáctico en S')
+            else:
+                raise SyntaxError('Error sintáctico en S')
+        else:
+            raise SyntaxError('Error sintáctico en S')
+    else:
+        raise SyntaxError('Error sintáctico en S')
+
+def A(tokens):
+    if tokens and (tokens[0][0] == 'var' or tokens[0][0].isdigit()):
+        opc = tokens[1][0]
+        if opc == '<=' or opc == '>=' or opc == '<' or opc == '>' or opc == '==' or opc == '!=':
+            B(tokens[2:])
+        else:
+            raise SyntaxError('Error sintáctico en A')
+    else:
+        raise SyntaxError('Error sintáctico en A')
+
+def B(tokens):
+    if tokens and tokens[0][0] == 'num':
+        if tokens[1][0] == ';':
+            if tokens[2][0] == 'var':
+                if tokens[3][0] == '++':
+                    if tokens[4][0] == ')':
+                        if tokens[5][0] == '{':
+                            C(tokens[6:])
+                        else:
+                            raise SyntaxError('Error sintáctico en B')
+                    else:
+                        raise SyntaxError('Error sintáctico en B')
+                else:
+                    raise SyntaxError('Error sintáctico en B')
+            else:
+                raise SyntaxError('Error sintáctico en B')
+        else:
+            raise SyntaxError('Error sintáctico en B')
+    else:
+        raise SyntaxError('Error sintáctico en B')
+
+def C(tokens):
+    if tokens and tokens[0][0] == 'if':
+        if tokens[1][0] == '(':
+            if tokens[2][0] == 'var':
+                if tokens[3][0] == '==':
+                    if tokens[4][0] == 'num':
+                        if tokens[5][0] == ')':
+                            if tokens[6][0] == 'continue':
+                                if tokens[7][0] == ';':
+                                    if tokens[8][0] == 'if':
+                                        if tokens[9][0] == '(':
+                                            if tokens[10][0] == 'var':
+                                                if tokens[11][0] == '==':
+                                                    if tokens[12][0] == 'num':
+                                                        if tokens[13][0] == ')':
+                                                            if tokens[14][0] == 'br':
+                                                                if tokens[15][0] == ';':
+                                                                    if tokens[16][0] == '}':
+                                                                        pass
+                                                                    else:
+                                                                        raise SyntaxError('Error sintáctico en C')
+                                                                else:
+                                                                    raise SyntaxError('Error sintáctico en C')
+                                                            else:
+                                                                raise SyntaxError('Error sintáctico en C')
+                                                        else:
+                                                            raise SyntaxError('Error sintáctico en C')
+                                                    else:
+                                                        raise SyntaxError('Error sintáctico en C')
+                                                else:
+                                                    raise SyntaxError('Error sintáctico en C')
+                                            else:
+                                                raise SyntaxError('Error sintáctico en C')
+                                        else:
+                                            raise SyntaxError('Error sintáctico en C')
+                                    else:
+                                        raise SyntaxError('Error sintáctico en C')
+                                else:
+                                    raise SyntaxError('Error sintáctico en C')
+                            else:
+                                raise SyntaxError('Error sintáctico en C')
+                        else:
+                            raise SyntaxError('Error sintáctico en C')
+                    else:
+                        raise SyntaxError('Error sintáctico en C')
+                else:
+                    raise SyntaxError('Error sintáctico en C')
+            else:
+                raise SyntaxError('Error sintáctico en C')
+        else:
+            raise SyntaxError('Error sintáctico en C')
+    else:
+        raise SyntaxError('Error sintáctico en C')
+
+
+
+

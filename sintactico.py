@@ -1,106 +1,249 @@
-#Analizador sintáctico 
 import re
+def parse_int_declaration(input_string):
+    # Tokenizando la entrada usando una expresión regular simple
+    tokens = re.findall(r'\w+|\S', input_string)
+    
+    # Verificando la palabra clave 'int'
+    if tokens[0] != "int":
+        return None
+    
+    # Verificando el identificador (nombre de la variable)
+    variable_name = tokens[1]
+    
+    # Verificando si hay una asignación inicial
+    initial_value = None
+    if len(tokens) > 3 and tokens[2] == "=":
+        initial_value = tokens[3]
+    
+    # Devolviendo la representación del nodo del AST
+    return ("int", variable_name, initial_value)
 
-#Función para Declaraciones int
-def parse_int_declaration(tokens):
-    if tokens[0] != 'int':
-        raise SyntaxError("Expected 'int'")
-    if not is_identifier(tokens[1]):
-        raise SyntaxError("Expected identifier")
-    # Continuar con el análisis sintáctico de la declaración
+def parse_float_declaration(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "float":
+        return None
+    variable_name = tokens[1]
+    initial_value = None
+    if len(tokens) > 3 and tokens[2] == "=":
+        initial_value = tokens[3]
+    return ("float", variable_name, initial_value)
 
-#Función para Declaraciones float
-def parse_float_declaration(tokens):
-    if tokens[0] != 'float':
-        raise SyntaxError("Expected 'float'")
-    if not is_identifier(tokens[1]):
-        raise SyntaxError("Expected identifier")
-    if tokens[2] == '=':
-        parse_assignment(tokens[3:])
-    elif tokens[2] == ';':
-        pass # Fin de la declaración
-    else:
-        raise SyntaxError("Expected '=' or ';'")
+def parse_char_declaration(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "char":
+        return None
+    variable_name = tokens[1]
+    initial_value = None
+    if len(tokens) > 3 and tokens[2] == "=":
+        initial_value = tokens[3]
+    return ("char", variable_name, initial_value)
 
-#Función para Declaraciones char
-def parse_char_declaration(tokens):
-    if tokens[0] != 'char':
-        raise SyntaxError("Expected 'char'")
-    if not is_identifier(tokens[1]):
-        raise SyntaxError("Expected identifier")
-    if tokens[2] == '=':
-        parse_assignment(tokens[3:])
-    elif tokens[2] == ';':
-        pass # Fin de la declaración
-    else:
-        raise SyntaxError("Expected '=' or ';'")
+def parse_long_declaration(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "long":
+        return None
+    variable_name = tokens[1]
+    initial_value = None
+    if len(tokens) > 3 and tokens[2] == "=":
+        initial_value = tokens[3]
+    return ("long", variable_name, initial_value)
 
-#Función para Declaraciones long
-def parse_long_declaration(tokens):
-    if tokens[0] != 'long':
-        raise SyntaxError("Expected 'long'")
-    if not is_identifier(tokens[1]):
-        raise SyntaxError("Expected identifier")
-    if tokens[2] == '=':
-        parse_assignment(tokens[3:])
-    elif tokens[2] == ';':
-        pass # Fin de la declaración
-    else:
-        raise SyntaxError("Expected '=' or ';'")
+def parse_short_declaration(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "short":
+        return None
+    variable_name = tokens[1]
+    initial_value = None
+    if len(tokens) > 3 and tokens[2] == "=":
+        initial_value = tokens[3]
+    return ("short", variable_name, initial_value)
 
-#Función para Declaraciones short
-def parse_short_declaration(tokens):
-    if tokens[0] != 'short':
-        raise SyntaxError("Expected 'short'")
-    if not is_identifier(tokens[1]):
-        raise SyntaxError("Expected identifier")
-    if tokens[2] == '=':
-        parse_assignment(tokens[3:])
-    elif tokens[2] == ';':
-        pass # Fin de la declaración
-    else:
-        raise SyntaxError("Expected '=' or ';'")
+def parse_if_else_statement(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "if":
+        return None
+    condition = tokens[1:tokens.index(')') + 1]
+    body = tokens[tokens.index('{') + 1:tokens.index('}')]
+    else_body = None
+    if "else" in tokens:
+        else_body = tokens[tokens.index('else') + 2:tokens[::-1].index('}') - 1]
+    return ("if-else", condition, body, else_body)
 
-# Función para Declaraciones const
-#primero verifica si la declaración comienza con la palabra clave const. Luego, identifica el tipo de la constante (como int, float, char, etc.) y llama a la función correspondiente para analizar el resto de la declaración. Esto permite una fácil extensión para admitir más tipos en el futuro.
-def parse_const_declaration(tokens):
+def parse_while_statement(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "while":
+        return None
+    condition = tokens[1:tokens.index(')') + 1]
+    body = tokens[tokens.index('{') + 1:tokens.index('}')]
+    return ("while", condition, body)
+
+def parse_for_statement(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "for":
+        return None
+
+    # Separando las partes de la declaración for
+    for_parts = input_string[input_string.index('(') + 1:input_string.index(')')].split(';')
+    initialization = re.findall(r'\w+|\S', for_parts[0])
+    condition = re.findall(r'\w+|\S', for_parts[1])
+    increment = re.findall(r'\w+|\S', for_parts[2])
+    body = tokens[tokens.index('{') + 1:tokens.index('}')]
+
+    return ("for", initialization, condition, increment, body)
+
+def parse_switch_case_statement(input_string):
+    tokens = re.findall(r'\w+|\S', input_string)
+    if tokens[0] != "switch":
+        return None
+    expression = tokens[1:tokens.index(')') + 1]
+    cases = []
+    body_tokens = tokens[tokens.index('{') + 1:tokens.index('}')]
+    i = 0
+    while i < len(body_tokens):
+        if body_tokens[i] == "case":
+            case_expression = body_tokens[i + 1]
+            case_body = []
+            i += 2
+            while i < len(body_tokens) and body_tokens[i] != "case" and body_tokens[i] != "default":
+                case_body.append(body_tokens[i])
+                i += 1
+            cases.append(("case", case_expression, case_body))
+        elif body_tokens[i] == "default":
+            default_body = []
+            i += 1
+            while i < len(body_tokens):
+                default_body.append(body_tokens[i])
+                i += 1
+            cases.append(("default", default_body))
+        else:
+            i += 1
+    return ("switch-case", expression, cases)
+
+
+def extract_for_parts(tokens):
+    # Verificamos el paréntesis de apertura
+    if tokens[0] != '(':
+        raise SyntaxError(f"Expected '(', got '{tokens[0]}'")
+
+    # Extraemos las partes separadas por punto y coma
+    initialization_tokens, condition_tokens, update_tokens = [], [], []
+    part = initialization_tokens
+    index = 1
+    while tokens[index] != ')':
+        if tokens[index] == ';':
+            if part is initialization_tokens:
+                part = condition_tokens
+            elif part is condition_tokens:
+                part = update_tokens
+        else:
+            part.append(tokens[index])
+        index += 1
+
+    # Verificamos el paréntesis de cierre
+    if tokens[index] != ')':
+        raise SyntaxError(f"Expected ')', got '{tokens[index]}'")
+
+    return initialization_tokens, condition_tokens, update_tokens, index
+
+ddef parse_const_declaration(tokens):
     if tokens[0] != 'const':
         raise SyntaxError("Expected 'const'")
     
     # Identificar el tipo de la constante
     const_type = tokens[1]
     
-    # Llamar a la función correspondiente basada en el tipo
+    # Llamar a la función correspondiente basada en el tipo y obtener el nodo del tipo
+    type_node = None
     if const_type == 'int':
-        parse_int_declaration(tokens[1:])
+        type_node = parse_int_declaration(tokens[1:])
     elif const_type == 'float':
-        parse_float_declaration(tokens[1:])
+        type_node = parse_float_declaration(tokens[1:])
     elif const_type == 'char':
-        parse_char_declaration(tokens[1:])
+        type_node = parse_char_declaration(tokens[1:])
     elif const_type == 'long':
-        parse_long_declaration(tokens[1:])
+        type_node = parse_long_declaration(tokens[1:])
     elif const_type == 'short':
-        parse_short_declaration(tokens[1:])
+        type_node = parse_short_declaration(tokens[1:])
     else:
         raise SyntaxError(f"Unexpected type '{const_type}' for const declaration")
-
-#unción para Ciclos while
-
-def parse_while_statement(tokens):
-    if tokens[0] != 'while':
-        raise SyntaxError("Expected 'while'")
-    if tokens[1] != '(':
-        raise SyntaxError("Expected '('")
     
-    # Analizar la condición dentro de los paréntesis
-    condition_tokens = extract_parentheses_content(tokens[2:])
-    parse_condition(condition_tokens)
-    
-    # Analizar el cuerpo del ciclo
-    body_tokens = extract_braces_content(tokens[2 + len(condition_tokens):])
+    # Construir y retornar el nodo AST para la declaración constante
+    return {'type': 'const_declaration', 'const_type': const_type, 'declaration': type_node}
+
+
+def parse_body(tokens):
+    index = 0
+
+    # Continuamos analizando mientras haya tokens
+    while index < len(tokens):
+        # Verificamos si estamos en un caso ('case') o en el caso predeterminado ('default')
+        if tokens[index] == 'case' or tokens[index] == 'default':
+            index += parse_case_or_default(tokens[index:])
+        # Verificamos si estamos en una declaración
+        elif is_declaration(tokens[index:]):
+            index += parse_declaration(tokens[index:])
+        # Verificamos si estamos en una estructura de control (como un 'if' o un 'while')
+        elif is_control_structure(tokens[index:]):
+            index += parse_control_structure(tokens[index:])
+        else:
+            raise SyntaxError(f"Unexpected tokens in body: '{tokens[index:]}'")
+
+def parse_case_or_default(tokens):
+    if tokens[0] == 'case':
+        # Analizar un caso individual
+        parse_expression(tokens[1:-1])  # Asume que 'break;' está al final
+    elif tokens[0] == 'default':
+        # Analizar el caso predeterminado
+        parse_body(tokens[1:-1])  # Asume que 'break;' está al final
+    else:
+        raise SyntaxError(f"Expected 'case' or 'default', got '{tokens[0]}'")
+
+def extract_expression_until_opening_brace(tokens):
+    expression_tokens = []
+    index = 0
+    while tokens[index] != '{':
+        expression_tokens.append(tokens[index])
+        index += 1
+    return expression_tokens, index
+
+def extract_body_until_keyword(tokens, keyword):
+    body_tokens = []
+    index = 0
+    while index < len(tokens) and tokens[index] != keyword:
+        body_tokens.append(tokens[index])
+        index += 1
+    return body_tokens, index
+
+def parse_do_while_statement(tokens):
+    # Verificamos la palabra clave 'do'
+    if tokens[0] != 'do':
+        raise SyntaxError(f"Expected 'do', got '{tokens[0]}'")
+
+    # Extraemos y analizamos el cuerpo del bucle
+    body_tokens, index = extract_body_until_keyword(tokens[1:], 'while')
     parse_body(body_tokens)
 
-#Función para Condicionales if-else
+    # Verificamos la palabra clave 'while'
+    if tokens[index + 1] != 'while':
+        raise SyntaxError(f"Expected 'while', got '{tokens[index + 1]}'")
+
+    # Extraemos y analizamos la condición
+    condition_tokens = extract_condition_until_semicolon(tokens[index + 2:])
+    parse_expression(condition_tokens)
+
+def parse_assignment(tokens):
+    # Extraemos la variable y el valor
+    variable_token = tokens[0]
+    value_tokens = tokens[2:]
+
+    # Verificamos el operador de asignación
+    if tokens[1] != '=':
+        raise SyntaxError(f"Expected '=', got '{tokens[1]}'")
+
+    # Analizamos la variable y el valor (puede ser una expresión)
+    parse_variable(variable_token)
+    parse_expression(value_tokens)
+
 def parse_if_statement(tokens):
     if tokens[0] != 'if':
         raise SyntaxError("Expected 'if'")
@@ -120,34 +263,37 @@ def parse_if_statement(tokens):
     if else_tokens and else_tokens[0] == 'else':
         parse_else_statement(else_tokens[1:])
 
-#Función Principal para Analizar DO WHILE
-def parse_do_while_statement(tokens):
-    # Verificamos la palabra clave 'do'
-    if tokens[0] != 'do':
-        raise SyntaxError(f"Expected 'do', got '{tokens[0]}'")
-
-    # Extraemos y analizamos el cuerpo del bucle
-    body_tokens, index = extract_body_until_keyword(tokens[1:], 'while')
-    parse_body(body_tokens)
-
-    # Verificamos la palabra clave 'while'
-    if tokens[index + 1] != 'while':
-        raise SyntaxError(f"Expected 'while', got '{tokens[index + 1]}'")
-
-    # Extraemos y analizamos la condición
-    condition_tokens = extract_condition_until_semicolon(tokens[index + 2:])
-    parse_expression(condition_tokens)
-
-#Función Auxiliar para Extraer el Cuerpo del Bucle
-def extract_body_until_keyword(tokens, keyword):
-    body_tokens = []
+def parse_logical_expression(tokens):
+    # La expresión puede incluir operadores lógicos
     index = 0
-    while index < len(tokens) and tokens[index] != keyword:
-        body_tokens.append(tokens[index])
+    while index < len(tokens):
+        if tokens[index] in ('&&', '||'):
+            parse_expression(tokens[:index])
+            parse_expression(tokens[index + 1:])
+            break
         index += 1
-    return body_tokens, index
 
-#Función Auxiliar para Extraer la Condición
+def parse_sizeof(tokens):
+    # Verificamos que el primer token sea 'sizeof'
+    if tokens[0] != 'sizeof':
+        raise SyntaxError(f"Expected 'sizeof', got '{tokens[0]}'")
+
+    # Extraemos el argumento de sizeof (puede ser una variable o constante)
+    argument_token = tokens[1].strip('()')
+
+    # Verificamos que el argumento sea una variable o constante válida
+    if not (is_valid_variable(argument_token) or is_valid_constant(argument_token)):
+        raise SyntaxError(f"Invalid argument for sizeof: '{argument_token}'")
+
+def parse_cases(tokens):
+    index = 0
+    while index < len(tokens):
+        # Verificamos si estamos en un caso ('case') o en el caso predeterminado ('default')
+        if tokens[index] == 'case' or tokens[index] == 'default':
+            index += parse_case_or_default(tokens[index:])
+        else:
+            raise SyntaxError(f"Unexpected tokens in cases: '{tokens[index:]}'")
+
 def extract_condition_until_semicolon(tokens):
     condition_tokens = []
     index = 0
@@ -216,38 +362,6 @@ def parse_switch_statement(tokens):
     case_tokens = extract_body_until_closing_brace(tokens[index + 1:])
     parse_cases(case_tokens)
 
-#Función Auxiliar para Extraer la Expresión
-def extract_expression_until_opening_brace(tokens):
-    expression_tokens = []
-    index = 0
-    while tokens[index] != '{':
-        expression_tokens.append(tokens[index])
-        index += 1
-    return expression_tokens, index
-
-#Función Auxiliar para Analizar los Casos
-def parse_cases(tokens):
-    index = 0
-    while index < len(tokens):
-        # Verificamos si estamos en un caso ('case') o en el caso predeterminado ('default')
-        if tokens[index] == 'case' or tokens[index] == 'default':
-            index += parse_case_or_default(tokens[index:])
-        else:
-            raise SyntaxError(f"Unexpected tokens in cases: '{tokens[index:]}'")
-
-#Función Auxiliar para Analizar un Caso o el Caso Predeterminado
-def parse_case_or_default(tokens):
-    if tokens[0] == 'case':
-        # Analizar un caso individual
-        parse_expression(tokens[1:-1])  # Asume que 'break;' está al final
-    elif tokens[0] == 'default':
-        # Analizar el caso predeterminado
-        parse_body(tokens[1:-1])  # Asume que 'break;' está al final
-    else:
-        raise SyntaxError(f"Expected 'case' or 'default', got '{tokens[0]}'")
-
-
-#Esta función analiza una constante en un caso, como el valor numérico después de la palabra clave case.
 def parse_constant(token):
     # Expresión regular para constantes numéricas enteras y flotantes
     pattern_numeric = r'\b\d+(\.\d*)?\b'
@@ -265,7 +379,31 @@ def parse_constant(token):
     # Si no coincide con ninguna de las anteriores, se lanza un error
     raise SyntaxError(f"Invalid constant: '{token}'")
 
-#Esta función analiza una expresión, como la expresión dentro de los paréntesis en una declaración switch.
+def parse_variable(token):
+    # Utilizamos la expresión regular de lexico.py para verificar si el token es un identificador válido
+    pattern_identifiers = r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'
+    if not re.match(pattern_identifiers, token):
+        raise SyntaxError(f"Invalid variable: '{token}'")
+
+def parse_cout(tokens):
+    # Verificamos que los primeros tokens sean 'cout' y '<<'
+    if tokens[0] != 'cout' or tokens[1] != '<<':
+        raise SyntaxError(f"Expected 'cout <<', got '{tokens[0]} {tokens[1]}'")
+
+    # Extraemos y analizamos la expresión a imprimir
+    expression_tokens = tokens[2:]
+    parse_expression(expression_tokens)
+
+def parse_relational_expression(tokens):
+    # La expresión puede incluir operadores relacionales
+    index = 0
+    while index < len(tokens):
+        if tokens[index] in ('<=', '>=', '<', '>', '==', '!='):
+            parse_expression(tokens[:index])
+            parse_expression(tokens[index + 1:])
+            break
+        index += 1
+
 def parse_expression(tokens):
     # Analizamos operadores aritméticos
     if any(op in tokens for op in ('+', '-', '*', '/')):
@@ -291,51 +429,6 @@ def parse_expression(tokens):
 
     raise SyntaxError(f"Invalid expression: '{tokens}'")
 
-#Esta función analiza el cuerpo de un caso, como las declaraciones dentro de un caso en un bloque switch.
-def parse_body(tokens):
-    index = 0
-
-    # Continuamos analizando mientras haya tokens
-    while index < len(tokens):
-        # Verificamos si estamos en un caso ('case') o en el caso predeterminado ('default')
-        if tokens[index] == 'case' or tokens[index] == 'default':
-            index += parse_case_or_default(tokens[index:])
-        # Verificamos si estamos en una declaración
-        elif is_declaration(tokens[index:]):
-            index += parse_declaration(tokens[index:])
-        # Verificamos si estamos en una estructura de control (como un 'if' o un 'while')
-        elif is_control_structure(tokens[index:]):
-            index += parse_control_structure(tokens[index:])
-        else:
-            raise SyntaxError(f"Unexpected tokens in body: '{tokens[index:]}'")
-
-#función para analizar una asignación:
-def parse_assignment(tokens):
-    # Extraemos la variable y el valor
-    variable_token = tokens[0]
-    value_tokens = tokens[2:]
-
-    # Verificamos el operador de asignación
-    if tokens[1] != '=':
-        raise SyntaxError(f"Expected '=', got '{tokens[1]}'")
-
-    # Analizamos la variable y el valor (puede ser una expresión)
-    parse_variable(variable_token)
-    parse_expression(value_tokens)
-
-
-#Operadores Relacionales
-def parse_relational_expression(tokens):
-    # La expresión puede incluir operadores relacionales
-    index = 0
-    while index < len(tokens):
-        if tokens[index] in ('<=', '>=', '<', '>', '==', '!='):
-            parse_expression(tokens[:index])
-            parse_expression(tokens[index + 1:])
-            break
-        index += 1
-
-#Operadores Aritméticos
 def parse_arithmetic_expression(tokens):
     # La expresión puede incluir operadores aritméticos
     index = 0
@@ -346,47 +439,6 @@ def parse_arithmetic_expression(tokens):
             break
         index += 1
 
-#Operadores Lógicos
-def parse_logical_expression(tokens):
-    # La expresión puede incluir operadores lógicos
-    index = 0
-    while index < len(tokens):
-        if tokens[index] in ('&&', '||'):
-            parse_expression(tokens[:index])
-            parse_expression(tokens[index + 1:])
-            break
-        index += 1
-
-def parse_variable(token):
-    # Utilizamos la expresión regular de lexico.py para verificar si el token es un identificador válido
-    pattern_identifiers = r'\b[a-zA-Z_][a-zA-Z0-9_]*\b'
-    if not re.match(pattern_identifiers, token):
-        raise SyntaxError(f"Invalid variable: '{token}'")
-
-#Función para analizar el operador sizeof
-def parse_sizeof(tokens):
-    # Verificamos que el primer token sea 'sizeof'
-    if tokens[0] != 'sizeof':
-        raise SyntaxError(f"Expected 'sizeof', got '{tokens[0]}'")
-
-    # Extraemos el argumento de sizeof (puede ser una variable o constante)
-    argument_token = tokens[1].strip('()')
-
-    # Verificamos que el argumento sea una variable o constante válida
-    if not (is_valid_variable(argument_token) or is_valid_constant(argument_token)):
-        raise SyntaxError(f"Invalid argument for sizeof: '{argument_token}'")
-
-#Función para analizar la sentencia cout
-def parse_cout(tokens):
-    # Verificamos que los primeros tokens sean 'cout' y '<<'
-    if tokens[0] != 'cout' or tokens[1] != '<<':
-        raise SyntaxError(f"Expected 'cout <<', got '{tokens[0]} {tokens[1]}'")
-
-    # Extraemos y analizamos la expresión a imprimir
-    expression_tokens = tokens[2:]
-    parse_expression(expression_tokens)
-
-#Función Principal para Analizar return
 def parse_return_statement(tokens):
     # Verificamos que el primer token sea 'return'
     if tokens[0] != 'return':
@@ -395,5 +447,3 @@ def parse_return_statement(tokens):
     # Extraemos y analizamos la expresión a devolver
     expression_tokens = tokens[1:]
     parse_expression(expression_tokens)
-   
-

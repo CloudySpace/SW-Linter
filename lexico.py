@@ -78,14 +78,12 @@ def parse(tokens):
 
 # Código que deseas analizar
 code_to_tokenize = '''
-int main() {
     int x = 10;
-    float y = 3.14;
-    char c = 'A';
-    cout << "Hello, world!" << endl;
-    return 0;
-}
 '''
+#    float y = 3.14;
+#    char c = 'A';
+#    cout << "Hello, world!" << endl;
+#    return 0;
 
 try:
     # Utilizamos el analizador léxico para obtener los tokens del código

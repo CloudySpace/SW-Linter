@@ -20,9 +20,10 @@ def tokenize_code(code):
     pattern_strings = r'\".*?\"'
     pattern_punctuation = r'[;{}()]'
     pattern_spaces = r'\s+'
+    pattern_end = r'\$'
 
     # Unimos todas las expresiones regulares en una única expresión
-    token_patterns = f'({pattern_keywords})|({pattern_operators})|({pattern_assignment})|({pattern_identifiers})|({pattern_constants})|({pattern_strings})|({pattern_punctuation})|({pattern_spaces})'
+    token_patterns = f'({pattern_keywords})|({pattern_operators})|({pattern_assignment})|({pattern_identifiers})|({pattern_constants})|({pattern_strings})|({pattern_punctuation})|({pattern_spaces}|{pattern_end})'
 
     for match in re.finditer(token_patterns, code):
         for i in range(1, 10):
@@ -47,35 +48,37 @@ def S(tokens):
     elif tokens and tokens[0][0] == 'char':
         A(tokens[1:])
     else:
-        raise SyntaxError('Error sintáctico en S')
+        raise SyntaxError('Error léxico en S')
 
 def B(tokens):
+    if tokens or tokens[0][0]== '$':
+            return;
     if tokens and tokens[0][0] == 'var':
         C(tokens[1:])
     else:
-        raise SyntaxError('Error sintáctico en B')
+        raise SyntaxError('Error léxico en B')
 
 def C(tokens):
     if tokens and tokens[0][0] == ';':
         pass
     else:
-        raise SyntaxError('Error sintáctico en C')
+        raise SyntaxError('Error léxico en C')
 
 def A(tokens):
     if tokens and tokens[0][0] == 'var':
         B(tokens[1:])
     else:
-        raise SyntaxError('Error sintáctico en A')
+        raise SyntaxError('Error léxico en A')
 
 # Resto de las funciones para los demás no terminales ...
 
-# Implementa el analizador sintáctico predictivo recursivo
+# Implementa el analizador léxico predictivo recursivo
 def parse(tokens):
     try:
         S(tokens)
-        print('Análisis sintáctico exitoso.')
+        print('Análisis léxico exitoso.')
     except SyntaxError as syntax_error:
-        print(f'Error sintáctico: {syntax_error.message}')
+        print(f'Error léxico: {syntax_error.message}')
 
 # Código que deseas analizar
 def main():
@@ -91,7 +94,7 @@ def main():
             for token, position, line in tokens:
                 print(f'Token: "{token}", Posición: {position}, Línea: {line}')
 
-            # Utilizamos el analizador sintáctico para analizar los tokens
+            # Utilizamos el analizador léxico para analizar los tokens
             parse(tokens)
 
         except LexicalError as lex_error:
@@ -102,7 +105,7 @@ def main():
         float y = 3.14;
         char c = 'A';
         cout << "Hello, world!" << endl;
-        return 0;
+        return 0;$
         '''
 
         try:
@@ -113,7 +116,7 @@ def main():
             for token, position, line in tokens:
                 print(f'Token: "{token}", Posición: {position}, Línea: {line}')
 
-            # Utilizamos el analizador sintáctico para analizar los tokens
+            # Utilizamos el analizador léxico para analizar los tokens
             parse(tokens)
 
         except LexicalError as lex_error:

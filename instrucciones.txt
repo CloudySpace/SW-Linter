@@ -10,7 +10,8 @@ int opcion;
 
 
 while(i > 3){
-		
+	cout >> i>> endl;
+    i++;	
 	};
 
 if(opcion >=opcion2)

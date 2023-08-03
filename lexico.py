@@ -41,6 +41,8 @@ class SyntaxError(Exception):
 
 # Define las funciones para cada no terminal en las reglas de producción
 def S(tokens):
+    if tokens or tokens[0][0]== '$':
+        return
     if tokens and (tokens[0][0] == 'int' or tokens[0][0] == 'const'):
         B(tokens[1:])
     elif tokens and (tokens[0][0] == 'float' or tokens[0][0] == 'const'):
@@ -52,19 +54,23 @@ def S(tokens):
 
 def B(tokens):
     if tokens or tokens[0][0]== '$':
-            return;
+            return
     if tokens and tokens[0][0] == 'var':
         C(tokens[1:])
     else:
         raise SyntaxError('Error léxico en B')
 
 def C(tokens):
+    if tokens or tokens[0][0]== '$':
+            return
     if tokens and tokens[0][0] == ';':
         pass
     else:
         raise SyntaxError('Error léxico en C')
 
 def A(tokens):
+    if tokens or tokens[0][0]== '$':
+            return
     if tokens and tokens[0][0] == 'var':
         B(tokens[1:])
     else:
@@ -101,11 +107,11 @@ def main():
             print(f'Error léxico: Token no reconocido: "{lex_error.token}" en la línea {lex_error.line}, columna {lex_error.column}')
     else:
         code_to_tokenize = '''
-        int x = 10;
-        float y = 3.14;
-        char c = 'A';
-        cout << "Hello, world!" << endl;
-        return 0;$
+        while(i > 3){
+        cout >> i>> endl;
+        i++;	
+        };
+        $
         '''
 
         try:

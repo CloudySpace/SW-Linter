@@ -439,18 +439,18 @@ def execute_variable_assignment(instr, ts) :
     ts.actualizar(simbolo)
 
 def execute_while_loop(instr, ts) :
-    while resolver_expreision_logica(instr.expLogica, ts) :
+    while resolver_expresion_logica(instr.expLogica, ts) :
         ts_local = TablaDeSimbolos(ts.simbolos)
         procesar_instrucciones(instr.instrucciones, ts_local)
 
 def execute_if_statement(instr, ts) :
-    val = resolver_expreision_logica(instr.expLogica, ts)
+    val = resolver_expresion_logica(instr.expLogica, ts)
     if val :
         ts_local = TablaDeSimbolos(ts.simbolos)
         procesar_instrucciones(instr.instrucciones, ts_local)
 
 def execute_if_statement_else(instr, ts) :
-    val = resolver_expreision_logica(instr.expLogica, ts)
+    val = resolver_expresion_logica(instr.expLogica, ts)
     if val :
         ts_local = TablaDeSimbolos(ts.simbolos)
         procesar_instrucciones(instr.instrIfVerdadero, ts_local)
@@ -471,7 +471,7 @@ def resolver_cadena(expCad, ts) :
         print('Error: Expresión cadena no válida')
 
 
-def resolver_expreision_logica(expLog, ts) :
+def resolver_expresion_logica(expLog, ts) :
     exp1 = resolver_expresion_aritmetica(expLog.exp1, ts)
     exp2 = resolver_expresion_aritmetica(expLog.exp2, ts)
     if expLog.operador == OPERACION_LOGICA.MAYOR_QUE : return exp1 > exp2

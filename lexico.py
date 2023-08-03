@@ -1,4 +1,5 @@
 import re
+from sys import argv
 
 class LexicalError(Exception):
     def __init__(self, line, column, token):
@@ -77,24 +78,46 @@ def parse(tokens):
         print(f'Error sintáctico: {syntax_error.message}')
 
 # Código que deseas analizar
-code_to_tokenize = '''
-    int x = 10;
-'''
-#    float y = 3.14;
-#    char c = 'A';
-#    cout << "Hello, world!" << endl;
-#    return 0;
+def main():
+    if len(argv) == 2:
+        code = argv[1]
+        code_to_tokenize = str(code)
 
-try:
-    # Utilizamos el analizador léxico para obtener los tokens del código
-    tokens = tokenize_code(code_to_tokenize)
+        try:
+            # Utilizamos el analizador léxico para obtener los tokens del código
+            tokens = tokenize_code(code_to_tokenize)
 
-    # Imprimimos los tokens encontrados
-    for token, position, line in tokens:
-        print(f'Token: "{token}", Posición: {position}, Línea: {line}')
+            # Imprimimos los tokens encontrados
+            for token, position, line in tokens:
+                print(f'Token: "{token}", Posición: {position}, Línea: {line}')
 
-    # Utilizamos el analizador sintáctico para analizar los tokens
-    parse(tokens)
+            # Utilizamos el analizador sintáctico para analizar los tokens
+            parse(tokens)
 
-except LexicalError as lex_error:
-    print(f'Error léxico: Token no reconocido: "{lex_error.token}" en la línea {lex_error.line}, columna {lex_error.column}')
+        except LexicalError as lex_error:
+            print(f'Error léxico: Token no reconocido: "{lex_error.token}" en la línea {lex_error.line}, columna {lex_error.column}')
+    else:
+        code_to_tokenize = '''
+        int x = 10;
+        float y = 3.14;
+        char c = 'A';
+        cout << "Hello, world!" << endl;
+        return 0;
+        '''
+
+        try:
+            # Utilizamos el analizador léxico para obtener los tokens del código
+            tokens = tokenize_code(code_to_tokenize)
+
+            # Imprimimos los tokens encontrados
+            for token, position, line in tokens:
+                print(f'Token: "{token}", Posición: {position}, Línea: {line}')
+
+            # Utilizamos el analizador sintáctico para analizar los tokens
+            parse(tokens)
+
+        except LexicalError as lex_error:
+            print(f'Error léxico: Token no reconocido: "{lex_error.token}" en la línea {lex_error.line}, columna {lex_error.column}')
+
+if __name__ == "__main__":
+    main()

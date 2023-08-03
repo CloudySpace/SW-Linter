@@ -108,7 +108,7 @@ def main():
     else:
         code_to_tokenize = '''
         while(i > 3){
-        cout >> i>> endl;
+        cout << i << endl;
         i++;	
         };
         $
